@@ -1,4 +1,4 @@
-INSERT INTO department (name)
+INSERT INTO department (deptName)
 VALUES ("Sales"),
        ("Engineering"),
        ("Finance"),
@@ -13,13 +13,17 @@ VALUES ("Sales Lead", 100000, 1),
        ("Software Engineer", 120000, 2),
        ("Legal Team Lead", 250000, 4),
        ("Lawyer", 19000, 4);
-       
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
+
+-- something's off here. employee table did not populate in workbench
+INSERT INTO employee (first_name, last_name, role_id)
 VALUES ("John", "Doe", 1),
-       ("Mike", "Chan", 2, 1),
        ("Ashley", "Rodriguez", 3),
-       ("Kevin", "Tupik", 4, 3),
        ("Kunal", "Singh", 5),
+       ("Sarah", "Lourd", 7);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES 
+       ("Mike", "Chan", 2, 1),
+       ("Kevin", "Tupik", 4, 3),
        ("Malia", "Brown", 6, 5),
-       ("Sarah", "Lourd", 7),
        ("Tom", "Allen", 8, 7);
