@@ -81,7 +81,7 @@ function viewAllDepts() {
 
 function viewAllRoles() {
   // Query database -- view all roles,
-  db.query("SELECT * FROM employees_db.roles", function (err, results) {
+  db.query("SELECT * FROM employees_db.role", function (err, results) {
     console.table(results);
     mainQuestions();
   });
@@ -134,13 +134,24 @@ function addRole() {
       {
         type: 'input',
         name: 'title',
-        message: "What is the title of the role to add?"
-        
+        message: "What is the title of the role to add?",
+        validate: (answer) => {
+          if (answer !== '') {
+            return true;
+          }
+          return 'Please enter at least one character.';
+        },
       },
       {
         type: 'input',
         name: 'salary',
-        message: "What is the salary of this role?"
+        message: "What is the salary of this role?",
+        validate: (answer) => {
+          if (answer !== '') {
+            return true;
+          }
+          return 'Please enter at least one number.';
+        },
       },
       {
         type: 'list',
@@ -158,9 +169,115 @@ function addRole() {
       });
     })
   })
-  
 }
 
+// HOW DO I LIMIT ROLES LIST TO MANAGER_ID NULL OR NON NULL? SELECT * FROM employees_db.employee WHERE employee.manager_id IS NULL" in workbench shows employees where manager_id is null. Join table? "SELECT * FROM employees_db.role" shows all roles.
+// prompt "Is this employee a people manager?"
+  // if yes, new functions to add ppl manger INSERT INTO employee (first_name, last_name, role_id) VALUES (?,??,???). present roleid as list of existing titles.
+  // if no, new function individual contributor INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ??, ???, ????)
+function addEmployeeManager() {
+  db.promise().query("SELECT * FROM employees_db.role")
+  .then( ([rows,fields]) => {
+    var choices = rows.map(({id, title}) => {
+      // console.table(choices);
+      return {
+        name: title,
+        value: id
+      };
+     
+    });
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'first_name',
+        message: "What is the FIRST name of the employee to add?",
+        validate: (answer) => {
+          if (answer !== '') {
+            return true;
+          }
+          return 'Please enter at least one character.';
+        },
+      },
+      {
+        type: 'input',
+        name: 'last_name',
+        message: "What is the LAST name of the employee to add?",
+        validate: (answer) => {
+          if (answer !== '') {
+            return true;
+          }
+          return 'Please enter at least one character.';
+        },
+      },
+      {
+        type: 'list',
+        name: 'role_id',
+        message: "What is the title for this employee?",
+        choices
+      }
+    ])
+    .then((data) => {
+      db.query(`INSERT INTO employee SET ?`, data, (err,result) => {
+        if (err) {
+          console.log(err);
+        }
+        viewAllEmployees();
+      });
+    })
+  })
+}
+
+function addEmployeeIndividual() {
+  db.promise().query("SELECT * FROM employees_db.role ")
+  .then( ([rows,fields]) => {
+    var choices = rows.map(({id, title}) => {
+      // console.table(choices);
+      return {
+        name: title,
+        value: id
+      };
+     
+    });
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'first_name',
+        message: "What is the FIRST name of the employee to add?",
+        validate: (answer) => {
+          if (answer !== '') {
+            return true;
+          }
+          return 'Please enter at least one character.';
+        },
+      },
+      {
+        type: 'input',
+        name: 'last_name',
+        message: "What is the LAST name of the employee to add?",
+        validate: (answer) => {
+          if (answer !== '') {
+            return true;
+          }
+          return 'Please enter at least one character.';
+        },
+      },
+      {
+        type: 'list',
+        name: 'role_id',
+        message: "What is the title for this employee?",
+        choices
+      }
+    ])
+    .then((data) => {
+      db.query(`INSERT INTO employee SET ?`, data, (err,result) => {
+        if (err) {
+          console.log(err);
+        }
+        viewAllEmployees();
+      });
+    })
+  })
+}
 app.use((req, res) => {
   res.status(404).end();
 });
