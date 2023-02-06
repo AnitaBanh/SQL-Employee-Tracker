@@ -1,14 +1,16 @@
 {
-  "name": "solved",
+  "name": "employee_tracker",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
+    "inquirer": "^8.2.4",
     "express": "^4.17.1",
     "mysql2": "^2.2.5"
   }
