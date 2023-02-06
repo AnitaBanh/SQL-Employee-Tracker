@@ -171,21 +171,28 @@ function addRole() {
   })
 }
 
-// HOW DO I LIMIT ROLES LIST TO MANAGER_ID NULL OR NON NULL? SELECT * FROM employees_db.employee WHERE employee.manager_id IS NULL" in workbench shows employees where manager_id is null. Join table? "SELECT * FROM employees_db.role" shows all roles.
+// HOW DO I LIMIT ROLES LIST TO MANAGER_ID NULL OR NON NULL? SELECT * FROM employees_db.employee WHERE employee.manager_id IS NULL" in workbench shows employees where manager_id is null. Join table? "SELECT * FROM employees_db.role" shows all roles. need columns from role: title, id and from employee: 
 // prompt "Is this employee a people manager?"
   // if yes, new functions to add ppl manger INSERT INTO employee (first_name, last_name, role_id) VALUES (?,??,???). present roleid as list of existing titles.
   // if no, new function individual contributor INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ??, ???, ????)
-function addEmployeeManager() {
+function addEmployee() {
   db.promise().query("SELECT * FROM employees_db.role")
   .then( ([rows,fields]) => {
-    var choices = rows.map(({id, title}) => {
-      // console.table(choices);
+    var roleChoices = rows.map(({id, title}) => {
       return {
         name: title,
         value: id
       };
-     
     });
+    db.promise().query("SELECT * FROM employees_db.employee")
+    .then( ([rows,fields]) => { 
+    var managerChoices = rows.map(({id, first_name, last_name}) => {
+      return {
+        name: `${first_name} ${last_name}`,
+        value: id
+      };
+    });
+    
     inquirer.prompt([
       {
         type: 'input',
@@ -211,10 +218,17 @@ function addEmployeeManager() {
       },
       {
         type: 'list',
+        name: 'manager_id',
+        message: "Who is the employee's manager?",
+        choices: managerChoices
+      },
+      {
+        type: 'list',
         name: 'role_id',
-        message: "What is the title for this employee?",
-        choices
-      }
+        message: "What is the employee's role?",
+        choices: roleChoices
+      },
+
     ])
     .then((data) => {
       db.query(`INSERT INTO employee SET ?`, data, (err,result) => {
@@ -223,9 +237,9 @@ function addEmployeeManager() {
         }
         viewAllEmployees();
       });
-    })
+    })})
   })
-}
+};
 
 function addEmployeeIndividual() {
   db.promise().query("SELECT * FROM employees_db.role ")
